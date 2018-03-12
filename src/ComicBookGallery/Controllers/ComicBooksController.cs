@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ComicBookGallery.Data;
+using ComicBookGallery.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,18 +10,28 @@ namespace ComicBookGallery.Controllers
 {
     public class ComicBooksController : Controller
     {
-        public ActionResult Details()
-        {
-            ViewBag.seriesTitle = "The Amazing Spider-Man";
-            ViewBag.issueNumber = 700;
-            ViewBag.description = "<p>Final Issue!! Witness the final hour </p>";
-            ViewBag.artists = new string[]
-            {
-                "Script: Dan Scott",
-                "Inking: Peter Stones"
-            };
+        private ComicBookRepo _comicBookRepo = null;
 
-            return View();
+        public ComicBooksController()
+        {
+            _comicBookRepo = new ComicBookRepo();
+        }
+
+        public ActionResult Index()
+        {
+            var comicBook = _comicBookRepo.GetComicBooks();
+            return View(comicBook);
+        }
+
+        public ActionResult Details(int? id)
+        {
+            if(id == null)
+            {
+                return HttpNotFound();
+            }
+            var comicBook = _comicBookRepo.GetComicBook(id.Value);
+
+            return View(comicBook);
         }
     }
 }
